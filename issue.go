@@ -70,6 +70,7 @@ type Issue struct {
 	SpentHours      float32        `json:"spent_hours,omitempty"`
 	TotalSpentHours float32        `json:"total_spent_hours,omitempty"`
 	EstimatedHours  float32        `json:"estimated_hours,omitempty"`
+	DoneRatio       int            `json:"done_ratio,omitempty"`
 }
 
 type IssueFilter struct {
