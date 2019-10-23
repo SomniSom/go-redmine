@@ -1,4 +1,4 @@
-module go-redmine
+module github.com/SomniSom/go-redmine
 
 go 1.12
 
