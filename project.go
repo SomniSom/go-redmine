@@ -35,22 +35,23 @@ type Project struct {
 }
 
 func (c *Client) Project(id int) (*Project, error) {
-	res, err := c.Get(c.endpoint + "/projects/" + strconv.Itoa(id) + ".json?key=" + c.apikey)
+	statusCode, body, err := c.fhttp.Get(nil, c.endpoint+"/projects/"+strconv.Itoa(id)+".json?key="+c.apikey)
+	//res, err := c.Get(c.endpoint + "/projects/" + strconv.Itoa(id) + ".json?key=" + c.apikey)
 	if err != nil {
 		return nil, err
 	}
-	defer printError(res.Body.Close())
+	//defer printError(res.Body.Close())
 
-	decoder := json.NewDecoder(res.Body)
+	//decoder := json.NewDecoder(res.Body)
 	var r projectResult
-	if res.StatusCode != 200 {
+	if statusCode != 200 {
 		var er errorsResult
-		err = decoder.Decode(&er)
+		err = json.Unmarshal(body, &er) //decoder.Decode(&er)
 		if err == nil {
 			err = errors.New(strings.Join(er.Errors, "\n"))
 		}
 	} else {
-		err = decoder.Decode(&r)
+		err = json.Unmarshal(body, &r) //decoder.Decode(&r)
 	}
 	if err != nil {
 		return nil, err
