@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -8,18 +9,22 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type issueRelationsResult struct {
 	IssueRelations []IssueRelation `json:"relations"`
 }
 
+//easyjson:json
 type issueRelationResult struct {
 	IssueRelation IssueRelation `json:"issue_relation"`
 }
 
+//easyjson:json
 type issueRelationRequest struct {
 	IssueRelation IssueRelation `json:"issue_relation"`
 }
 
+//easyjson:json
 type IssueRelation struct {
 	Id           int    `json:"id"`
 	IssueId      string `json:"issue_id"`
@@ -33,12 +38,12 @@ func (c *Client) IssueRelations(issueId int) ([]IssueRelation, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r issueRelationsResult
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult
@@ -60,12 +65,12 @@ func (c *Client) IssueRelation(id int) (*IssueRelation, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r issueRelationResult
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult
@@ -98,7 +103,7 @@ func (c *Client) CreateIssueRelation(issueRelation IssueRelation) (*IssueRelatio
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r issueRelationResult
@@ -133,10 +138,10 @@ func (c *Client) UpdateIssueRelation(issueRelation IssueRelation) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		decoder := json.NewDecoder(res.Body)
@@ -162,10 +167,10 @@ func (c *Client) DeleteIssueRelation(id int) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 
 	decoder := json.NewDecoder(res.Body)

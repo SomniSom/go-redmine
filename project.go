@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -8,18 +9,22 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type projectRequest struct {
 	Project Project `json:"project"`
 }
 
+//easyjson:json
 type projectResult struct {
 	Project Project `json:"project"`
 }
 
+//easyjson:json
 type projectsResult struct {
 	Projects []Project `json:"projects"`
 }
 
+//easyjson:json
 type Project struct {
 	Id          int    `json:"id"`
 	Name        string `json:"name"`
@@ -34,7 +39,7 @@ func (c *Client) Project(id int) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r projectResult
@@ -58,7 +63,7 @@ func (c *Client) Projects() ([]Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r projectsResult
@@ -93,7 +98,7 @@ func (c *Client) CreateProject(project Project) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r projectRequest
@@ -128,10 +133,10 @@ func (c *Client) UpdateProject(project Project) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		decoder := json.NewDecoder(res.Body)
@@ -157,10 +162,10 @@ func (c *Client) DeleteProject(id int) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 
 	decoder := json.NewDecoder(res.Body)

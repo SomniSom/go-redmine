@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -8,19 +9,23 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type issueCategoriesResult struct {
 	IssueCategories []IssueCategory `json:"issue_categories"`
 	TotalCount      int             `json:"total_count"`
 }
 
+//easyjson:json
 type issueCategoryResult struct {
 	IssueCategory IssueCategory `json:"issue_category"`
 }
 
+//easyjson:json
 type issueCategoryRequest struct {
 	IssueCategory IssueCategory `json:"issue_category"`
 }
 
+//easyjson:json
 type IssueCategory struct {
 	Id         int    `json:"id"`
 	Project    IdName `json:"project"`
@@ -33,12 +38,12 @@ func (c *Client) IssueCategories(projectId int) ([]IssueCategory, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r issueCategoriesResult
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult
@@ -60,12 +65,12 @@ func (c *Client) IssueCategory(id int) (*IssueCategory, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r issueCategoryResult
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult
@@ -98,7 +103,7 @@ func (c *Client) CreateIssueCategory(issueCategory IssueCategory) (*IssueCategor
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r issueCategoryResult
@@ -133,10 +138,10 @@ func (c *Client) UpdateIssueCategory(issueCategory IssueCategory) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		decoder := json.NewDecoder(res.Body)
@@ -162,10 +167,10 @@ func (c *Client) DeleteIssueCategory(id int) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 
 	decoder := json.NewDecoder(res.Body)

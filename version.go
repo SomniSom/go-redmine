@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -8,18 +9,22 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type versionRequest struct {
 	Version Version `json:"version"`
 }
 
+//easyjson:json
 type versionResult struct {
 	Version Version `json:"version"`
 }
 
+//easyjson:json
 type versionsResult struct {
 	Versions []Version `json:"versions"`
 }
 
+//easyjson:json
 type Version struct {
 	Id          int    `json:"id"`
 	Project     IdName `json:"project"`
@@ -36,10 +41,10 @@ func (c *Client) Version(id int) (*Version, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 
 	decoder := json.NewDecoder(res.Body)
@@ -64,10 +69,10 @@ func (c *Client) Versions(projectId int) ([]Version, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 
 	decoder := json.NewDecoder(res.Body)
@@ -103,10 +108,10 @@ func (c *Client) CreateVersion(version Version) (*Version, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 
 	decoder := json.NewDecoder(res.Body)
@@ -142,10 +147,10 @@ func (c *Client) UpdateVersion(version Version) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult
@@ -167,10 +172,10 @@ func (c *Client) DeleteVersion(id int) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult

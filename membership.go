@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -8,18 +9,22 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type membershipsResult struct {
 	Memberships []Membership `json:"memberships"`
 }
 
+//easyjson:json
 type membershipResult struct {
 	Membership Membership `json:"membership"`
 }
 
+//easyjson:json
 type membershipRequest struct {
 	Membership Membership `json:"membership"`
 }
 
+//easyjson:json
 type Membership struct {
 	Id      int      `json:"id"`
 	Project IdName   `json:"project"`
@@ -33,12 +38,12 @@ func (c *Client) Memberships(projectId int) ([]Membership, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r membershipsResult
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult
@@ -60,12 +65,12 @@ func (c *Client) Membership(id int) (*Membership, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r membershipResult
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult
@@ -98,7 +103,7 @@ func (c *Client) CreateMembership(membership Membership) (*Membership, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r membershipRequest
@@ -133,10 +138,10 @@ func (c *Client) UpdateMembership(membership Membership) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		decoder := json.NewDecoder(res.Body)
@@ -162,10 +167,10 @@ func (c *Client) DeleteMembership(id int) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 
 	decoder := json.NewDecoder(res.Body)

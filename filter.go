@@ -6,6 +6,7 @@ type Filter struct {
 	filters map[string]string
 }
 
+//NewFilter
 func NewFilter(args ...string) *Filter {
 	f := &Filter{}
 	if len(args)%2 == 0 {

@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -6,10 +7,12 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type issuePrioritiesResult struct {
 	IssuePriorities []IssuePriority `json:"issue_priorities"`
 }
 
+//easyjson:json
 type IssuePriority struct {
 	Id        int    `json:"id"`
 	Name      string `json:"name"`
@@ -21,7 +24,7 @@ func (c *Client) IssuePriorities() ([]IssuePriority, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r issuePrioritiesResult

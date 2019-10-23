@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -6,6 +7,7 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type rolesResult struct {
 	Roles []IdName `json:"roles"`
 }
@@ -15,7 +17,7 @@ func (c *Client) Roles() ([]IdName, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r rolesResult

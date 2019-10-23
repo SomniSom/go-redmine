@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -7,10 +8,12 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type newsResult struct {
 	News []News `json:"news"`
 }
 
+//easyjson:json
 type News struct {
 	Id          int    `json:"id"`
 	Project     IdName `json:"project"`
@@ -25,12 +28,12 @@ func (c *Client) News(projectId int) ([]News, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r newsResult
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult

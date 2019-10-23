@@ -1,22 +1,27 @@
+//go:generate easyjson --all
 package redmine
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/valyala/fasthttp"
 	"net/http"
 	"strconv"
 	"strings"
 )
 
+//easyjson:json
 type issueRequest struct {
 	Issue Issue `json:"issue"`
 }
 
+//easyjson:json
 type issueResult struct {
 	Issue Issue `json:"issue"`
 }
 
+//easyjson:json
 type issuesResult struct {
 	Issues     []Issue `json:"issues"`
 	TotalCount uint    `json:"total_count"`
@@ -24,12 +29,15 @@ type issuesResult struct {
 	Limit      uint    `json:"limit"`
 }
 
+//easyjson:json
 type JournalDetails struct {
 	Property string `json:"property"`
 	Name     string `json:"name"`
 	OldValue string `json:"old_value"`
 	NewValue string `json:"new_value"`
 }
+
+//easyjson:json
 type Journal struct {
 	Id        int              `json:"id"`
 	User      *IdName          `json:"user"`
@@ -38,6 +46,7 @@ type Journal struct {
 	Details   []JournalDetails `json:"details"`
 }
 
+//easyjson:json
 type Issue struct {
 	Id              int            `json:"id"`
 	Subject         string         `json:"subject"`
@@ -82,6 +91,7 @@ type IssueFilter struct {
 	UpdatedOn    string
 }
 
+//easyjson:json
 type CustomField struct {
 	Id       int         `json:"id"`
 	Name     string      `json:"name"`
@@ -151,7 +161,7 @@ func (c *Client) CreateIssue(issue Issue) (*Issue, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r issueRequest
@@ -177,24 +187,25 @@ func (c *Client) UpdateIssue(issue Issue) error {
 	if err != nil {
 		return err
 	}
-	req, err := http.NewRequest("PUT", c.endpoint+"/issues/"+strconv.Itoa(issue.Id)+".json?key="+c.apikey, strings.NewReader(string(s)))
-	if err != nil {
-		return err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	res, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
 
-	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+	req := fasthttp.AcquireRequest()
+	req.URI().Update(c.endpoint + "/issues/" + strconv.Itoa(issue.Id) + ".json?key=" + c.apikey)
+	req.Header.SetMethod("PUT")
+	req.Header.Set("Content-Type", "application/json")
+	req.AppendBody(s)
+	res := fasthttp.AcquireResponse()
+
+	err = c.fhttp.Do(req, res)
+	if err != nil {
+		return err
 	}
-	if res.StatusCode != 200 {
-		decoder := json.NewDecoder(res.Body)
+
+	if res.StatusCode() == 404 {
+		return errors.New("Not Found ")
+	}
+	if res.StatusCode() != 200 {
 		var er errorsResult
-		err = decoder.Decode(&er)
+		err = json.Unmarshal(res.Body(), &er)
 		if err == nil {
 			err = errors.New(strings.Join(er.Errors, "\n"))
 		}
@@ -206,25 +217,24 @@ func (c *Client) UpdateIssue(issue Issue) error {
 }
 
 func (c *Client) DeleteIssue(id int) error {
-	req, err := http.NewRequest("DELETE", c.endpoint+"/issues/"+strconv.Itoa(id)+".json?key="+c.apikey, strings.NewReader(""))
-	if err != nil {
-		return err
-	}
+	req := fasthttp.AcquireRequest()
+	req.URI().Update(c.endpoint + "/issues/" + strconv.Itoa(id) + ".json?key=" + c.apikey)
+	req.Header.SetMethod("DELETE")
 	req.Header.Set("Content-Type", "application/json")
-	res, err := c.Do(req)
+	res := fasthttp.AcquireResponse()
+
+	err := c.fhttp.Do(req, res)
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
 
-	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+	if res.StatusCode() == 404 {
+		return errors.New("Not Found ")
 	}
 
-	decoder := json.NewDecoder(res.Body)
-	if res.StatusCode != 200 {
+	if res.StatusCode() != 200 {
 		var er errorsResult
-		err = decoder.Decode(&er)
+		err = json.Unmarshal(res.Body(), &er)
 		if err == nil {
 			err = errors.New(strings.Join(er.Errors, "\n"))
 		}
@@ -275,62 +285,52 @@ func mapConcat(m map[string]string, delimiter string) string {
 
 func getOneIssue(c *Client, id int, args map[string]string) (*Issue, error) {
 	url := c.endpoint + "/issues/" + strconv.Itoa(id) + ".json?key=" + c.apikey
-
 	if args != nil {
 		url += "&" + mapConcat(args, "&")
 	}
 
-	res, err := c.Get(url)
+	statusCode, body, err := c.fhttp.Get(nil, url)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
 
-	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+	if statusCode == 404 {
+		return nil, errors.New("Not Found ")
 	}
 
-	decoder := json.NewDecoder(res.Body)
 	var r issueRequest
-	if res.StatusCode != 200 {
+	if statusCode != 200 {
 		var er errorsResult
-		err = decoder.Decode(&er)
+		err = json.Unmarshal(body, &er)
 		if err == nil {
 			err = errors.New(strings.Join(er.Errors, "\n"))
 		}
 	} else {
-		err = decoder.Decode(&r)
+		err = json.Unmarshal(body, &r)
 	}
-	if err != nil {
-		return nil, err
-	}
-	return &r.Issue, nil
+
+	return &r.Issue, err
 }
 
 func getIssue(c *Client, url string, offset int) (*issuesResult, error) {
-	res, err := c.Get(c.endpoint + url + "&offset=" + strconv.Itoa(offset))
-
+	statusCode, body, err := c.fhttp.Get(nil, c.endpoint+url+"&offset="+strconv.Itoa(offset))
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
 
-	decoder := json.NewDecoder(res.Body)
 	var r issuesResult
-	if res.StatusCode != 200 {
+	if statusCode != 200 {
 		var er errorsResult
-		err = decoder.Decode(&er)
+		//err = decoder.Decode(&er)
+		err = json.Unmarshal(body, &er)
 		if err == nil {
 			err = errors.New(strings.Join(er.Errors, "\n"))
 		}
 	} else {
-		err = decoder.Decode(&r)
-	}
-	if err != nil {
-		return nil, err
+		err = json.Unmarshal(body, &r)
 	}
 
-	return &r, nil
+	return &r, err
 }
 
 func getIssues(c *Client, url string) ([]Issue, error) {

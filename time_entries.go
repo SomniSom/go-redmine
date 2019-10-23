@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -8,18 +9,22 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type timeEntriesResult struct {
 	TimeEntries []TimeEntry `json:"time_entries"`
 }
 
+//easyjson:json
 type timeEntryResult struct {
 	TimeEntry TimeEntry `json:"time_entry"`
 }
 
+//easyjson:json
 type timeEntryRequest struct {
 	TimeEntry TimeEntry `json:"time_entry"`
 }
 
+//easyjson:json
 type TimeEntry struct {
 	Id           int            `json:"id"`
 	Project      IdName         `json:"project"`
@@ -49,12 +54,12 @@ func (c *Client) TimeEntriesWithFilter(filter Filter) ([]TimeEntry, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r timeEntriesResult
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult
@@ -76,12 +81,12 @@ func (c *Client) TimeEntries(projectId int) ([]TimeEntry, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r timeEntriesResult
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult
@@ -103,12 +108,12 @@ func (c *Client) TimeEntry(id int) (*TimeEntry, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r timeEntryResult
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult
@@ -141,7 +146,7 @@ func (c *Client) CreateTimeEntry(timeEntry TimeEntry) (*TimeEntry, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r timeEntryResult
@@ -176,10 +181,10 @@ func (c *Client) UpdateTimeEntry(timeEntry TimeEntry) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		decoder := json.NewDecoder(res.Body)
@@ -205,10 +210,10 @@ func (c *Client) DeleteTimeEntry(id int) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 
 	decoder := json.NewDecoder(res.Body)

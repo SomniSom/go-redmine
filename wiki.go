@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -8,18 +9,22 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type wikiPagesResult struct {
 	WikiPages []WikiPage `json:"wiki_pages"`
 }
 
+//easyjson:json
 type wikiPageResult struct {
 	WikiPage WikiPage `json:"wiki_page"`
 }
 
+//easyjson:json
 type wikiPageRequest struct {
 	WikiPage WikiPage `json:"wiki_page"`
 }
 
+//easyjson:json
 type WikiPage struct {
 	Title     string      `json:"title"`
 	Parent    *Parent     `json:"parent,omitempty"`
@@ -32,6 +37,7 @@ type WikiPage struct {
 	ParentID  int         `json:"parent_id"`
 }
 
+//easyjson:json
 type Parent struct {
 	Title string `json:"title"`
 }
@@ -43,7 +49,7 @@ func (c *Client) WikiPages(projectId int) ([]WikiPage, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r wikiPagesResult
@@ -79,12 +85,12 @@ func (c *Client) getWikiPage(projectId int, resource string) (*WikiPage, error) 
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r wikiPageResult
 	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found")
+		return nil, errors.New("Not Found ")
 	}
 	if res.StatusCode != 200 {
 		var er errorsResult
@@ -117,7 +123,7 @@ func (c *Client) CreateWikiPage(projectId int, wikiPage WikiPage) (*WikiPage, er
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r wikiPageResult
@@ -152,9 +158,9 @@ func (c *Client) UpdateWikiPage(projectId int, wikiPage WikiPage) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 
 	if res.StatusCode != 200 {
@@ -179,10 +185,10 @@ func (c *Client) DeleteWikiPage(projectId int, title string) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	if res.StatusCode == 404 {
-		return errors.New("Not Found")
+		return errors.New("Not Found ")
 	}
 
 	decoder := json.NewDecoder(res.Body)

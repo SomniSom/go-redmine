@@ -1,7 +1,9 @@
+//go:generate easyjson --all
 package redmine
 
 import (
 	"fmt"
+	"github.com/valyala/fasthttp"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -13,13 +15,14 @@ type Client struct {
 	*http.Client
 	Limit  int
 	Offset int
+	fhttp  *fasthttp.Client
 }
 
 var DefaultLimit int = -1  // "-1" means "No setting"
 var DefaultOffset int = -1 //"-1" means "No setting"
 
 func NewClient(endpoint, apikey string) *Client {
-	return &Client{endpoint, apikey, http.DefaultClient, DefaultLimit, DefaultOffset}
+	return &Client{endpoint, apikey, http.DefaultClient, DefaultLimit, DefaultOffset, &fasthttp.Client{}}
 }
 
 // URLWithFilter return string url by concat endpoint, path and filter
@@ -52,15 +55,18 @@ func (c *Client) getPaginationClause() string {
 	return clause
 }
 
+//easyjson:json
 type errorsResult struct {
 	Errors []string `json:"errors"`
 }
 
+//easyjson:json
 type IdName struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
 
+//easyjson:json
 type Id struct {
 	Id int `json:"id"`
 }

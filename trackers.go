@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -7,6 +8,7 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type trackersResult struct {
 	Trackers []IdName `json:"trackers"`
 }
@@ -16,7 +18,7 @@ func (c *Client) Trackers() ([]IdName, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r trackersResult

@@ -1,3 +1,4 @@
+//go:generate easyjson --all
 package redmine
 
 import (
@@ -9,10 +10,12 @@ import (
 	"strings"
 )
 
+//easyjson:json
 type uploadResponse struct {
 	Upload Upload `json:"upload"`
 }
 
+//easyjson:json
 type Upload struct {
 	Token       string `json:"token"`
 	Filename    string `json:"filename"`
@@ -33,7 +36,7 @@ func (c *Client) Upload(filename string) (*Upload, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer printError(res.Body.Close())
 
 	decoder := json.NewDecoder(res.Body)
 	var r uploadResponse
