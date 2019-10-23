@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjsonD13a9ad4DecodeGoRedmine(in *jlexer.Lexer, out *issuePrioritiesResult) {
+func easyjsonD13a9ad4DecodeGithubComSomniSomGoRedmine(in *jlexer.Lexer, out *issuePrioritiesResult) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -69,7 +69,7 @@ func easyjsonD13a9ad4DecodeGoRedmine(in *jlexer.Lexer, out *issuePrioritiesResul
 		in.Consumed()
 	}
 }
-func easyjsonD13a9ad4EncodeGoRedmine(out *jwriter.Writer, in issuePrioritiesResult) {
+func easyjsonD13a9ad4EncodeGithubComSomniSomGoRedmine(out *jwriter.Writer, in issuePrioritiesResult) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -95,27 +95,27 @@ func easyjsonD13a9ad4EncodeGoRedmine(out *jwriter.Writer, in issuePrioritiesResu
 // MarshalJSON supports json.Marshaler interface
 func (v issuePrioritiesResult) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD13a9ad4EncodeGoRedmine(&w, v)
+	easyjsonD13a9ad4EncodeGithubComSomniSomGoRedmine(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v issuePrioritiesResult) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD13a9ad4EncodeGoRedmine(w, v)
+	easyjsonD13a9ad4EncodeGithubComSomniSomGoRedmine(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *issuePrioritiesResult) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD13a9ad4DecodeGoRedmine(&r, v)
+	easyjsonD13a9ad4DecodeGithubComSomniSomGoRedmine(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *issuePrioritiesResult) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD13a9ad4DecodeGoRedmine(l, v)
+	easyjsonD13a9ad4DecodeGithubComSomniSomGoRedmine(l, v)
 }
-func easyjsonD13a9ad4DecodeGoRedmine1(in *jlexer.Lexer, out *IssuePriority) {
+func easyjsonD13a9ad4DecodeGithubComSomniSomGoRedmine1(in *jlexer.Lexer, out *IssuePriority) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -150,7 +150,7 @@ func easyjsonD13a9ad4DecodeGoRedmine1(in *jlexer.Lexer, out *IssuePriority) {
 		in.Consumed()
 	}
 }
-func easyjsonD13a9ad4EncodeGoRedmine1(out *jwriter.Writer, in IssuePriority) {
+func easyjsonD13a9ad4EncodeGithubComSomniSomGoRedmine1(out *jwriter.Writer, in IssuePriority) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -175,23 +175,23 @@ func easyjsonD13a9ad4EncodeGoRedmine1(out *jwriter.Writer, in IssuePriority) {
 // MarshalJSON supports json.Marshaler interface
 func (v IssuePriority) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD13a9ad4EncodeGoRedmine1(&w, v)
+	easyjsonD13a9ad4EncodeGithubComSomniSomGoRedmine1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v IssuePriority) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD13a9ad4EncodeGoRedmine1(w, v)
+	easyjsonD13a9ad4EncodeGithubComSomniSomGoRedmine1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *IssuePriority) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD13a9ad4DecodeGoRedmine1(&r, v)
+	easyjsonD13a9ad4DecodeGithubComSomniSomGoRedmine1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *IssuePriority) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD13a9ad4DecodeGoRedmine1(l, v)
+	easyjsonD13a9ad4DecodeGithubComSomniSomGoRedmine1(l, v)
 }

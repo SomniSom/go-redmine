@@ -3,9 +3,7 @@ package redmine
 
 import (
 	"encoding/json"
-	"errors"
 	"strconv"
-	"strings"
 )
 
 //easyjson:json
@@ -32,46 +30,32 @@ type User struct {
 }
 
 func (c *Client) Users() ([]User, error) {
-	res, err := c.Get(c.endpoint + "/users.json?key=" + c.apikey + c.getPaginationClause())
+	statusCode, body, err := c.fhttp.Get(nil, c.endpoint+"/users.json?key="+c.apikey+c.getPaginationClause())
 	if err != nil {
 		return nil, err
 	}
-	defer printError(res.Body.Close())
 
-	decoder := json.NewDecoder(res.Body)
 	var r usersResult
-	if res.StatusCode != 200 {
-		var er errorsResult
-		err = decoder.Decode(&er)
-		if err == nil {
-			err = errors.New(strings.Join(er.Errors, "\n"))
-		}
+	if statusCode != 200 {
+		return nil, checkStatusCode(statusCode, body)
 	} else {
-		err = decoder.Decode(&r)
+		err = json.Unmarshal(body, &r)
 	}
-	if err != nil {
-		return nil, err
-	}
-	return r.Users, nil
+
+	return r.Users, err
 }
 
 func (c *Client) User(id int) (*User, error) {
-	res, err := c.Get(c.endpoint + "/users/" + strconv.Itoa(id) + ".json?key=" + c.apikey)
+	statusCode, body, err := c.fhttp.Get(nil, c.endpoint+"/users/"+strconv.Itoa(id)+".json?key="+c.apikey)
 	if err != nil {
 		return nil, err
 	}
-	defer printError(res.Body.Close())
 
-	decoder := json.NewDecoder(res.Body)
 	var r userResult
-	if res.StatusCode != 200 {
-		var er errorsResult
-		err = decoder.Decode(&er)
-		if err == nil {
-			err = errors.New(strings.Join(er.Errors, "\n"))
-		}
+	if statusCode != 200 {
+		return nil, checkStatusCode(statusCode, body)
 	} else {
-		err = decoder.Decode(&r)
+		err = json.Unmarshal(body, &r)
 	}
 	if err != nil {
 		return nil, err

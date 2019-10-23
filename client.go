@@ -1,4 +1,3 @@
-//go:generate easyjson --all
 package redmine
 
 import (

@@ -21,7 +21,6 @@ type issueResult struct {
 	Issue Issue `json:"issue"`
 }
 
-//easyjson:json
 type issuesResult struct {
 	Issues     []Issue `json:"issues"`
 	TotalCount uint    `json:"total_count"`
@@ -46,13 +45,12 @@ type Journal struct {
 	Details   []JournalDetails `json:"details"`
 }
 
-//easyjson:json
 type Issue struct {
 	Id              int            `json:"id"`
 	Subject         string         `json:"subject"`
 	Description     string         `json:"description"`
 	ProjectId       int            `json:"project_id"`
-	Project         *IdName        `json:"project"`
+	Project         *IdName        `json:"project,omitempty"`
 	TrackerId       int            `json:"tracker_id"`
 	Tracker         *IdName        `json:"tracker"`
 	ParentId        int            `json:"parent_issue_id,omitempty"`
@@ -313,6 +311,7 @@ func getOneIssue(c *Client, id int, args map[string]string) (*Issue, error) {
 }
 
 func getIssue(c *Client, url string, offset int) (*issuesResult, error) {
+	fmt.Println(c.endpoint + url)
 	statusCode, body, err := c.fhttp.Get(nil, c.endpoint+url+"&offset="+strconv.Itoa(offset))
 	if err != nil {
 		return nil, err
@@ -320,13 +319,9 @@ func getIssue(c *Client, url string, offset int) (*issuesResult, error) {
 
 	var r issuesResult
 	if statusCode != 200 {
-		var er errorsResult
-		//err = decoder.Decode(&er)
-		err = json.Unmarshal(body, &er)
-		if err == nil {
-			err = errors.New(strings.Join(er.Errors, "\n"))
-		}
+		return nil, checkStatusCode(statusCode, body)
 	} else {
+
 		err = json.Unmarshal(body, &r)
 	}
 

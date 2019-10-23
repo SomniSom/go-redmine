@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson7b166cadDecodeGoRedmine(in *jlexer.Lexer, out *projectsResult) {
+func easyjson7b166cadDecodeGithubComSomniSomGoRedmine(in *jlexer.Lexer, out *projectsResult) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -69,7 +69,7 @@ func easyjson7b166cadDecodeGoRedmine(in *jlexer.Lexer, out *projectsResult) {
 		in.Consumed()
 	}
 }
-func easyjson7b166cadEncodeGoRedmine(out *jwriter.Writer, in projectsResult) {
+func easyjson7b166cadEncodeGithubComSomniSomGoRedmine(out *jwriter.Writer, in projectsResult) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -95,27 +95,27 @@ func easyjson7b166cadEncodeGoRedmine(out *jwriter.Writer, in projectsResult) {
 // MarshalJSON supports json.Marshaler interface
 func (v projectsResult) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson7b166cadEncodeGoRedmine(&w, v)
+	easyjson7b166cadEncodeGithubComSomniSomGoRedmine(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v projectsResult) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson7b166cadEncodeGoRedmine(w, v)
+	easyjson7b166cadEncodeGithubComSomniSomGoRedmine(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *projectsResult) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson7b166cadDecodeGoRedmine(&r, v)
+	easyjson7b166cadDecodeGithubComSomniSomGoRedmine(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *projectsResult) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson7b166cadDecodeGoRedmine(l, v)
+	easyjson7b166cadDecodeGithubComSomniSomGoRedmine(l, v)
 }
-func easyjson7b166cadDecodeGoRedmine1(in *jlexer.Lexer, out *projectResult) {
+func easyjson7b166cadDecodeGithubComSomniSomGoRedmine1(in *jlexer.Lexer, out *projectResult) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -146,7 +146,7 @@ func easyjson7b166cadDecodeGoRedmine1(in *jlexer.Lexer, out *projectResult) {
 		in.Consumed()
 	}
 }
-func easyjson7b166cadEncodeGoRedmine1(out *jwriter.Writer, in projectResult) {
+func easyjson7b166cadEncodeGithubComSomniSomGoRedmine1(out *jwriter.Writer, in projectResult) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -161,27 +161,27 @@ func easyjson7b166cadEncodeGoRedmine1(out *jwriter.Writer, in projectResult) {
 // MarshalJSON supports json.Marshaler interface
 func (v projectResult) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson7b166cadEncodeGoRedmine1(&w, v)
+	easyjson7b166cadEncodeGithubComSomniSomGoRedmine1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v projectResult) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson7b166cadEncodeGoRedmine1(w, v)
+	easyjson7b166cadEncodeGithubComSomniSomGoRedmine1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *projectResult) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson7b166cadDecodeGoRedmine1(&r, v)
+	easyjson7b166cadDecodeGithubComSomniSomGoRedmine1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *projectResult) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson7b166cadDecodeGoRedmine1(l, v)
+	easyjson7b166cadDecodeGithubComSomniSomGoRedmine1(l, v)
 }
-func easyjson7b166cadDecodeGoRedmine2(in *jlexer.Lexer, out *projectRequest) {
+func easyjson7b166cadDecodeGithubComSomniSomGoRedmine2(in *jlexer.Lexer, out *projectRequest) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -212,7 +212,7 @@ func easyjson7b166cadDecodeGoRedmine2(in *jlexer.Lexer, out *projectRequest) {
 		in.Consumed()
 	}
 }
-func easyjson7b166cadEncodeGoRedmine2(out *jwriter.Writer, in projectRequest) {
+func easyjson7b166cadEncodeGithubComSomniSomGoRedmine2(out *jwriter.Writer, in projectRequest) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -227,27 +227,27 @@ func easyjson7b166cadEncodeGoRedmine2(out *jwriter.Writer, in projectRequest) {
 // MarshalJSON supports json.Marshaler interface
 func (v projectRequest) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson7b166cadEncodeGoRedmine2(&w, v)
+	easyjson7b166cadEncodeGithubComSomniSomGoRedmine2(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v projectRequest) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson7b166cadEncodeGoRedmine2(w, v)
+	easyjson7b166cadEncodeGithubComSomniSomGoRedmine2(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *projectRequest) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson7b166cadDecodeGoRedmine2(&r, v)
+	easyjson7b166cadDecodeGithubComSomniSomGoRedmine2(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *projectRequest) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson7b166cadDecodeGoRedmine2(l, v)
+	easyjson7b166cadDecodeGithubComSomniSomGoRedmine2(l, v)
 }
-func easyjson7b166cadDecodeGoRedmine3(in *jlexer.Lexer, out *Project) {
+func easyjson7b166cadDecodeGithubComSomniSomGoRedmine3(in *jlexer.Lexer, out *Project) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -288,7 +288,7 @@ func easyjson7b166cadDecodeGoRedmine3(in *jlexer.Lexer, out *Project) {
 		in.Consumed()
 	}
 }
-func easyjson7b166cadEncodeGoRedmine3(out *jwriter.Writer, in Project) {
+func easyjson7b166cadEncodeGithubComSomniSomGoRedmine3(out *jwriter.Writer, in Project) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -328,23 +328,23 @@ func easyjson7b166cadEncodeGoRedmine3(out *jwriter.Writer, in Project) {
 // MarshalJSON supports json.Marshaler interface
 func (v Project) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson7b166cadEncodeGoRedmine3(&w, v)
+	easyjson7b166cadEncodeGithubComSomniSomGoRedmine3(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Project) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson7b166cadEncodeGoRedmine3(w, v)
+	easyjson7b166cadEncodeGithubComSomniSomGoRedmine3(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Project) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson7b166cadDecodeGoRedmine3(&r, v)
+	easyjson7b166cadDecodeGithubComSomniSomGoRedmine3(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Project) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson7b166cadDecodeGoRedmine3(l, v)
+	easyjson7b166cadDecodeGithubComSomniSomGoRedmine3(l, v)
 }

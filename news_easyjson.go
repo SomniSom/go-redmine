@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjsonCa3fdb35DecodeGoRedmine(in *jlexer.Lexer, out *newsResult) {
+func easyjsonCa3fdb35DecodeGithubComSomniSomGoRedmine(in *jlexer.Lexer, out *newsResult) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -69,7 +69,7 @@ func easyjsonCa3fdb35DecodeGoRedmine(in *jlexer.Lexer, out *newsResult) {
 		in.Consumed()
 	}
 }
-func easyjsonCa3fdb35EncodeGoRedmine(out *jwriter.Writer, in newsResult) {
+func easyjsonCa3fdb35EncodeGithubComSomniSomGoRedmine(out *jwriter.Writer, in newsResult) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -95,27 +95,27 @@ func easyjsonCa3fdb35EncodeGoRedmine(out *jwriter.Writer, in newsResult) {
 // MarshalJSON supports json.Marshaler interface
 func (v newsResult) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonCa3fdb35EncodeGoRedmine(&w, v)
+	easyjsonCa3fdb35EncodeGithubComSomniSomGoRedmine(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v newsResult) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonCa3fdb35EncodeGoRedmine(w, v)
+	easyjsonCa3fdb35EncodeGithubComSomniSomGoRedmine(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *newsResult) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonCa3fdb35DecodeGoRedmine(&r, v)
+	easyjsonCa3fdb35DecodeGithubComSomniSomGoRedmine(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *newsResult) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonCa3fdb35DecodeGoRedmine(l, v)
+	easyjsonCa3fdb35DecodeGithubComSomniSomGoRedmine(l, v)
 }
-func easyjsonCa3fdb35DecodeGoRedmine1(in *jlexer.Lexer, out *News) {
+func easyjsonCa3fdb35DecodeGithubComSomniSomGoRedmine1(in *jlexer.Lexer, out *News) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -137,7 +137,7 @@ func easyjsonCa3fdb35DecodeGoRedmine1(in *jlexer.Lexer, out *News) {
 		case "id":
 			out.Id = int(in.Int())
 		case "project":
-			(out.Project).UnmarshalEasyJSON(in)
+			easyjsonCa3fdb35DecodeGithubComSomniSomGoRedmine2(in, &out.Project)
 		case "title":
 			out.Title = string(in.String())
 		case "summary":
@@ -156,7 +156,7 @@ func easyjsonCa3fdb35DecodeGoRedmine1(in *jlexer.Lexer, out *News) {
 		in.Consumed()
 	}
 }
-func easyjsonCa3fdb35EncodeGoRedmine1(out *jwriter.Writer, in News) {
+func easyjsonCa3fdb35EncodeGithubComSomniSomGoRedmine1(out *jwriter.Writer, in News) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -168,7 +168,7 @@ func easyjsonCa3fdb35EncodeGoRedmine1(out *jwriter.Writer, in News) {
 	{
 		const prefix string = ",\"project\":"
 		out.RawString(prefix)
-		(in.Project).MarshalEasyJSON(out)
+		easyjsonCa3fdb35EncodeGithubComSomniSomGoRedmine2(out, in.Project)
 	}
 	{
 		const prefix string = ",\"title\":"
@@ -196,23 +196,72 @@ func easyjsonCa3fdb35EncodeGoRedmine1(out *jwriter.Writer, in News) {
 // MarshalJSON supports json.Marshaler interface
 func (v News) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonCa3fdb35EncodeGoRedmine1(&w, v)
+	easyjsonCa3fdb35EncodeGithubComSomniSomGoRedmine1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v News) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonCa3fdb35EncodeGoRedmine1(w, v)
+	easyjsonCa3fdb35EncodeGithubComSomniSomGoRedmine1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *News) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonCa3fdb35DecodeGoRedmine1(&r, v)
+	easyjsonCa3fdb35DecodeGithubComSomniSomGoRedmine1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *News) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonCa3fdb35DecodeGoRedmine1(l, v)
+	easyjsonCa3fdb35DecodeGithubComSomniSomGoRedmine1(l, v)
+}
+func easyjsonCa3fdb35DecodeGithubComSomniSomGoRedmine2(in *jlexer.Lexer, out *IdName) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "id":
+			out.Id = int(in.Int())
+		case "name":
+			out.Name = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonCa3fdb35EncodeGithubComSomniSomGoRedmine2(out *jwriter.Writer, in IdName) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"id\":"
+		out.RawString(prefix[1:])
+		out.Int(int(in.Id))
+	}
+	{
+		const prefix string = ",\"name\":"
+		out.RawString(prefix)
+		out.String(string(in.Name))
+	}
+	out.RawByte('}')
 }

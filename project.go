@@ -4,6 +4,7 @@ package redmine
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -24,7 +25,6 @@ type projectsResult struct {
 	Projects []Project `json:"projects"`
 }
 
-//easyjson:json
 type Project struct {
 	Id          int    `json:"id"`
 	Name        string `json:"name"`
@@ -60,27 +60,24 @@ func (c *Client) Project(id int) (*Project, error) {
 }
 
 func (c *Client) Projects() ([]Project, error) {
-	res, err := c.Get(c.endpoint + "/projects.json?key=" + c.apikey + c.getPaginationClause())
+	fmt.Println(c.endpoint + "/projects.json?key=" + c.apikey + c.getPaginationClause())
+	statusCode, body, err := c.fhttp.Get(nil, c.endpoint+"/projects.json?key="+c.apikey+c.getPaginationClause())
 	if err != nil {
 		return nil, err
 	}
-	defer printError(res.Body.Close())
 
-	decoder := json.NewDecoder(res.Body)
 	var r projectsResult
-	if res.StatusCode != 200 {
+	if statusCode != 200 {
 		var er errorsResult
-		err = decoder.Decode(&er)
+		err = json.Unmarshal(body, &er)
 		if err == nil {
 			err = errors.New(strings.Join(er.Errors, "\n"))
 		}
 	} else {
-		err = decoder.Decode(&r)
+		err = json.Unmarshal(body, &r)
 	}
-	if err != nil {
-		return nil, err
-	}
-	return r.Projects, nil
+
+	return r.Projects, err
 }
 
 func (c *Client) CreateProject(project Project) (*Project, error) {
