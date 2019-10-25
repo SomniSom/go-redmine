@@ -45,14 +45,7 @@ func main() {
 	for _, userId := range strings.Split(users, ",") {
 		if id, err := strconv.Atoi(userId); err == nil {
 			acceptedUsers = append(acceptedUsers, id)
-		} else {
-			fmt.Println(err)
 		}
-
-	}
-	if len(acceptedUsers) == 0 {
-		fmt.Println("Accepted users not found")
-		return
 	}
 
 	cl := redmine.NewClient(endpoint, key)
