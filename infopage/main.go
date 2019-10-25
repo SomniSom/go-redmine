@@ -70,7 +70,6 @@ func main() {
 			if issue == nil {
 				continue
 			}
-			//fmt.Println(issue.GetTitle(), " == ", issue.AssignedTo.Name, issue.DoneRatio, issue.EstimatedHours, issue.SpentHours,)
 			if _, ok := data[issue.AssignedTo.Name]; !ok {
 				data[issue.AssignedTo.Name] = make([]*redmine.Issue, 0, 3)
 			}
