@@ -78,9 +78,9 @@ func main() {
 	}
 
 	for user, issues := range data {
-		fmt.Println("\n", user)
+		fmt.Println("\n", user, issues[0].AssignedTo.Id)
 		for _, issue := range issues {
-			fmt.Println(issue.AssignedTo.Id, issue.GetTitle(), issue.DoneRatio, issue.EstimatedHours, issue.SpentHours)
+			fmt.Println(issue.GetTitle(), issue.DoneRatio, issue.EstimatedHours, issue.SpentHours)
 		}
 	}
 
