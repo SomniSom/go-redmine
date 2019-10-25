@@ -22,10 +22,10 @@ type issueResult struct {
 }
 
 type issuesResult struct {
-	Issues     []Issue `json:"issues"`
-	TotalCount uint    `json:"total_count"`
-	Offset     uint    `json:"offset"`
-	Limit      uint    `json:"limit"`
+	Issues     []*Issue `json:"issues"`
+	TotalCount uint     `json:"total_count"`
+	Offset     uint     `json:"offset"`
+	Limit      uint     `json:"limit"`
 }
 
 //easyjson:json
@@ -97,7 +97,7 @@ type CustomField struct {
 	Value    interface{} `json:"value"`
 }
 
-func (c *Client) IssuesOf(projectId int) ([]Issue, error) {
+func (c *Client) IssuesOf(projectId int) ([]*Issue, error) {
 	issues, err := getIssues(c, "/issues.json?project_id="+strconv.Itoa(projectId)+"&key="+c.apikey+c.getPaginationClause())
 
 	if err != nil {
@@ -115,7 +115,7 @@ func (c *Client) IssueWithArgs(id int, args map[string]string) (*Issue, error) {
 	return getOneIssue(c, id, args)
 }
 
-func (c *Client) IssuesByQuery(queryId int) ([]Issue, error) {
+func (c *Client) IssuesByQuery(queryId int) ([]*Issue, error) {
 	issues, err := getIssues(c, "/issues.json?query_id="+strconv.Itoa(queryId)+"&key="+c.apikey+c.getPaginationClause())
 
 	if err != nil {
@@ -124,7 +124,7 @@ func (c *Client) IssuesByQuery(queryId int) ([]Issue, error) {
 	return issues, nil
 }
 
-func (c *Client) IssuesByFilter(f *IssueFilter) ([]Issue, error) {
+func (c *Client) IssuesByFilter(f *IssueFilter) ([]*Issue, error) {
 	issues, err := getIssues(c, "/issues.json?key="+c.apikey+c.getPaginationClause()+getIssueFilterClause(f))
 
 	if err != nil {
@@ -133,7 +133,7 @@ func (c *Client) IssuesByFilter(f *IssueFilter) ([]Issue, error) {
 	return issues, nil
 }
 
-func (c *Client) Issues() ([]Issue, error) {
+func (c *Client) Issues() ([]*Issue, error) {
 	issues, err := getIssues(c, "/issues.json?key="+c.apikey+c.getPaginationClause())
 
 	if err != nil {
@@ -244,6 +244,14 @@ func (issue *Issue) GetTitle() string {
 	return issue.Tracker.Name + " #" + strconv.Itoa(issue.Id) + ": " + issue.Subject
 }
 
+func (issue *Issue) Update(client *Client) {
+	iss, err := client.Issue(issue.Id)
+	if err != nil || iss == nil {
+		return
+	}
+	*issue = *iss
+}
+
 func getIssueFilterClause(filter *IssueFilter) string {
 	if filter == nil {
 		return ""
@@ -311,7 +319,7 @@ func getOneIssue(c *Client, id int, args map[string]string) (*Issue, error) {
 }
 
 func getIssue(c *Client, url string, offset int) (*issuesResult, error) {
-	fmt.Println(c.endpoint + url)
+
 	statusCode, body, err := c.fhttp.Get(nil, c.endpoint+url+"&offset="+strconv.Itoa(offset))
 	if err != nil {
 		return nil, err
@@ -328,9 +336,9 @@ func getIssue(c *Client, url string, offset int) (*issuesResult, error) {
 	return &r, err
 }
 
-func getIssues(c *Client, url string) ([]Issue, error) {
+func getIssues(c *Client, url string) ([]*Issue, error) {
 	completed := false
-	var issues []Issue
+	var issues []*Issue
 
 	for completed == false {
 		r, err := getIssue(c, url, len(issues))

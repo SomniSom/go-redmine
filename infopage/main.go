@@ -51,8 +51,7 @@ func main() {
 	cl := redmine.NewClient(endpoint, key)
 	cl.Offset = -1
 	cl.Limit = 100
-	//fmt.Println(cl.Projects())
-	//fmt.Println(cl.Users())
+
 	issues, err := cl.IssuesByFilter(&redmine.IssueFilter{StatusId: "2"})
 	if err != nil {
 		tracerr.PrintSourceColor(err)
@@ -60,17 +59,30 @@ func main() {
 		return
 	}
 
-	var data []*redmine.Issue
+	var data = make(map[string][]*redmine.Issue)
 
 	for _, issue := range issues {
 		if issue.AssignedTo != nil {
 			if !acceptUser(issue.AssignedTo.Id) {
 				continue
 			}
-			data = append(data, issue)
-			fmt.Println(issue.GetTitle(), " == ", issue.AssignedTo.Name)
 			issue.Update(cl)
-			fmt.Println(issue.DoneRatio, issue.EstimatedHours, issue.SpentHours)
+			if issue == nil {
+				continue
+			}
+			//fmt.Println(issue.GetTitle(), " == ", issue.AssignedTo.Name, issue.DoneRatio, issue.EstimatedHours, issue.SpentHours,)
+			if _, ok := data[issue.AssignedTo.Name]; !ok {
+				data[issue.AssignedTo.Name] = make([]*redmine.Issue, 0, 3)
+			}
+			data[issue.AssignedTo.Name] = append(data[issue.AssignedTo.Name], issue)
 		}
 	}
+
+	for user, issues := range data {
+		fmt.Println("\n", user)
+		for _, issue := range issues {
+			fmt.Println(issue.GetTitle(), issue.DoneRatio, issue.EstimatedHours, issue.SpentHours)
+		}
+	}
+
 }

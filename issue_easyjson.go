@@ -44,16 +44,24 @@ func easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine(in *jlexer.Lexer, out *iss
 				in.Delim('[')
 				if out.Issues == nil {
 					if !in.IsDelim(']') {
-						out.Issues = make([]Issue, 0, 1)
+						out.Issues = make([]*Issue, 0, 8)
 					} else {
-						out.Issues = []Issue{}
+						out.Issues = []*Issue{}
 					}
 				} else {
 					out.Issues = (out.Issues)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v1 Issue
-					(v1).UnmarshalEasyJSON(in)
+					var v1 *Issue
+					if in.IsNull() {
+						in.Skip()
+						v1 = nil
+					} else {
+						if v1 == nil {
+							v1 = new(Issue)
+						}
+						(*v1).UnmarshalEasyJSON(in)
+					}
 					out.Issues = append(out.Issues, v1)
 					in.WantComma()
 				}
@@ -90,7 +98,11 @@ func easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine(out *jwriter.Writer, in is
 				if v2 > 0 {
 					out.RawByte(',')
 				}
-				(v3).MarshalEasyJSON(out)
+				if v3 == nil {
+					out.RawString("null")
+				} else {
+					(*v3).MarshalEasyJSON(out)
+				}
 			}
 			out.RawByte(']')
 		}
@@ -839,7 +851,7 @@ func easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine7(in *jlexer.Lexer, out *Is
 						if v8 == nil {
 							v8 = new(Upload)
 						}
-						easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine9(in, v8)
+						(*v8).UnmarshalEasyJSON(in)
 					}
 					out.Uploads = append(out.Uploads, v8)
 					in.WantComma()
@@ -1088,7 +1100,7 @@ func easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine7(out *jwriter.Writer, in I
 				if v13 == nil {
 					out.RawString("null")
 				} else {
-					easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine9(out, *v13)
+					(*v13).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -1160,62 +1172,6 @@ func (v *Issue) UnmarshalJSON(data []byte) error {
 func (v *Issue) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine7(l, v)
 }
-func easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine9(in *jlexer.Lexer, out *Upload) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "token":
-			out.Token = string(in.String())
-		case "filename":
-			out.Filename = string(in.String())
-		case "content_type":
-			out.ContentType = string(in.String())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine9(out *jwriter.Writer, in Upload) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"token\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.Token))
-	}
-	{
-		const prefix string = ",\"filename\":"
-		out.RawString(prefix)
-		out.String(string(in.Filename))
-	}
-	{
-		const prefix string = ",\"content_type\":"
-		out.RawString(prefix)
-		out.String(string(in.ContentType))
-	}
-	out.RawByte('}')
-}
 func easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine8(in *jlexer.Lexer, out *Id) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
@@ -1258,7 +1214,7 @@ func easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine8(out *jwriter.Writer, in I
 	}
 	out.RawByte('}')
 }
-func easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine10(in *jlexer.Lexer, out *CustomField) {
+func easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine9(in *jlexer.Lexer, out *CustomField) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1301,7 +1257,7 @@ func easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine10(in *jlexer.Lexer, out *C
 		in.Consumed()
 	}
 }
-func easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine10(out *jwriter.Writer, in CustomField) {
+func easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine9(out *jwriter.Writer, in CustomField) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -1337,23 +1293,23 @@ func easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine10(out *jwriter.Writer, in 
 // MarshalJSON supports json.Marshaler interface
 func (v CustomField) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine10(&w, v)
+	easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine9(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CustomField) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine10(w, v)
+	easyjsonE9b96fefEncodeGithubComSomniSomGoRedmine9(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CustomField) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine10(&r, v)
+	easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine9(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CustomField) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine10(l, v)
+	easyjsonE9b96fefDecodeGithubComSomniSomGoRedmine9(l, v)
 }
