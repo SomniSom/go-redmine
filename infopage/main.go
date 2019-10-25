@@ -23,6 +23,10 @@ func init() {
 }
 
 func acceptUser(userId int) bool {
+	if len(acceptedUsers) == 0 {
+		return true
+	}
+
 	for _, au := range acceptedUsers {
 		if au == userId {
 			return true
@@ -33,7 +37,7 @@ func acceptUser(userId int) bool {
 
 func main() {
 	flag.Parse()
-	if endpoint == "" || key == "" || users == "" {
+	if endpoint == "" || key == "" {
 		flag.PrintDefaults()
 		return
 	}
@@ -41,7 +45,10 @@ func main() {
 	for _, userId := range strings.Split(users, ",") {
 		if id, err := strconv.Atoi(userId); err == nil {
 			acceptedUsers = append(acceptedUsers, id)
+		} else {
+			fmt.Println(err)
 		}
+
 	}
 	if len(acceptedUsers) == 0 {
 		fmt.Println("Accepted users not found")
@@ -80,7 +87,7 @@ func main() {
 	for user, issues := range data {
 		fmt.Println("\n", user)
 		for _, issue := range issues {
-			fmt.Println(issue.GetTitle(), issue.DoneRatio, issue.EstimatedHours, issue.SpentHours)
+			fmt.Println(issue.AssignedTo.Id, issue.GetTitle(), issue.DoneRatio, issue.EstimatedHours, issue.SpentHours)
 		}
 	}
 
