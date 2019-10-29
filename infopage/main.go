@@ -35,6 +35,17 @@ func acceptUser(userId int) bool {
 	return false
 }
 
+func timePercent(done int, estimate, spent float32) (bool, int) {
+	if (estimate - spent - float32(done)) == 0 {
+		return true, 0
+	}
+	if estimate == 0 {
+		return false, 0
+	}
+	proc := int((spent / estimate) * 100)
+	return done >= (proc - 10), proc
+}
+
 func main() {
 	flag.Parse()
 	if endpoint == "" || key == "" {
@@ -80,7 +91,8 @@ func main() {
 	for user, issues := range data {
 		fmt.Println("\n", user, issues[0].AssignedTo.Id)
 		for _, issue := range issues {
-			fmt.Println(issue.GetTitle(), issue.DoneRatio, issue.EstimatedHours, issue.SpentHours)
+			correct, tPercent := timePercent(issue.DoneRatio, issue.EstimatedHours, issue.SpentHours)
+			fmt.Printf("%v Done: %v(%v) Estimate: %v Spent: %v Correct: %v\n", issue.GetTitle(), issue.DoneRatio, tPercent, issue.EstimatedHours, issue.SpentHours, correct)
 		}
 	}
 

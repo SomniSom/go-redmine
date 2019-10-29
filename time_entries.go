@@ -4,6 +4,7 @@ package redmine
 import (
 	"encoding/json"
 	"errors"
+	"github.com/valyala/fasthttp"
 	"net/http"
 	"strconv"
 	"strings"
@@ -45,30 +46,30 @@ func (c *Client) TimeEntriesWithFilter(filter Filter) ([]TimeEntry, error) {
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("GET", uri, nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("X-Redmine-API-Key", c.apikey)
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer printError(res.Body.Close())
 
-	decoder := json.NewDecoder(res.Body)
+	req := fasthttp.AcquireRequest()
+	req.URI().Update(uri)
+	req.Header.SetMethod("GET")
+	req.Header.Set("Content-Type", "application/json")
+	res := fasthttp.AcquireResponse()
+
+	err = c.fhttp.Do(req, res)
+	if err != nil {
+		return nil, err
+	}
+
 	var r timeEntriesResult
-	if res.StatusCode == 404 {
+	if res.StatusCode() == 404 {
 		return nil, errors.New("Not Found ")
 	}
-	if res.StatusCode != 200 {
+	if res.StatusCode() != 200 {
 		var er errorsResult
-		err = decoder.Decode(&er)
+		err = json.Unmarshal(res.Body(), &er)
 		if err == nil {
 			err = errors.New(strings.Join(er.Errors, "\n"))
 		}
 	} else {
-		err = decoder.Decode(&r)
+		err = json.Unmarshal(res.Body(), &r)
 	}
 	if err != nil {
 		return nil, err
@@ -77,25 +78,31 @@ func (c *Client) TimeEntriesWithFilter(filter Filter) ([]TimeEntry, error) {
 }
 
 func (c *Client) TimeEntries(projectId int) ([]TimeEntry, error) {
-	res, err := c.Get(c.endpoint + "/projects/" + strconv.Itoa(projectId) + "/time_entries.json?key=" + c.apikey + c.getPaginationClause())
+	req := fasthttp.AcquireRequest()
+	req.URI().Update(c.endpoint + "/projects/" + strconv.Itoa(projectId) + "/time_entries.json?key=" + c.apikey + c.getPaginationClause())
+	req.Header.SetMethod("GET")
+	req.Header.Set("Content-Type", "application/json")
+	res := fasthttp.AcquireResponse()
+
+	err := c.fhttp.Do(req, res)
 	if err != nil {
 		return nil, err
 	}
-	defer printError(res.Body.Close())
+	//defer printError(res.Body.Close())
 
-	decoder := json.NewDecoder(res.Body)
+	//decoder := json.NewDecoder(res.Body)
 	var r timeEntriesResult
-	if res.StatusCode == 404 {
+	if res.StatusCode() == 404 {
 		return nil, errors.New("Not Found ")
 	}
-	if res.StatusCode != 200 {
+	if res.StatusCode() != 200 {
 		var er errorsResult
-		err = decoder.Decode(&er)
+		err = json.Unmarshal(res.Body(), &er)
 		if err == nil {
 			err = errors.New(strings.Join(er.Errors, "\n"))
 		}
 	} else {
-		err = decoder.Decode(&r)
+		err = json.Unmarshal(res.Body(), &r)
 	}
 	if err != nil {
 		return nil, err
