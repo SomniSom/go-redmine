@@ -1,9 +1,17 @@
 package redmine
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
 type Filter struct {
-	filters map[string]string
+	UserID    string
+	ProjectID string
+	SpentOn   time.Time
+	From      time.Time
+	To        time.Time
+	filters   map[string]string
 }
 
 //NewFilter
@@ -25,11 +33,31 @@ func (f *Filter) AddPair(key, value string) {
 }
 
 func (f *Filter) ToURLParams() string {
-	params := ""
-	for k, v := range f.filters {
-		params += "&" + k + "=" + v
+	builder := strings.Builder{}
+	if !f.SpentOn.IsZero() {
+		builder.WriteString("&spent_on=" + f.SpentOn.Format("2006-01-02"))
 	}
-	return params
+
+	if f.UserID != "" {
+		builder.WriteString("&user_id=" + f.UserID)
+	}
+
+	if f.ProjectID != "" {
+		builder.WriteString("&project_id=" + f.ProjectID)
+	}
+
+	if !f.From.IsZero() {
+		builder.WriteString("&from=" + f.From.Format("2006-01-02"))
+	}
+
+	if !f.To.IsZero() {
+		builder.WriteString("&to=" + f.To.Format("2006-01-02"))
+	}
+
+	for k, v := range f.filters {
+		builder.WriteString("&" + k + "=" + v)
+	}
+	return builder.String()
 }
 
 func encode4Redmine(s string) string {

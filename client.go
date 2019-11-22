@@ -39,6 +39,11 @@ func (c *Client) URLWithFilter(path string, f Filter) (string, error) {
 	if c.Offset > -1 {
 		f.AddPair("offset", strconv.Itoa(c.Offset))
 	}
+
+	if _, ok := f.filters["key"]; !ok {
+		f.AddPair("key", c.apikey)
+	}
+
 	fullURL.RawQuery = f.ToURLParams()
 	return fullURL.String(), nil
 }

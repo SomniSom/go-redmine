@@ -86,7 +86,9 @@ type IssueFilter struct {
 	TrackerId    string
 	StatusId     string
 	AssignedToId string
+	CreatedOn    string
 	UpdatedOn    string
+	Include      string
 }
 
 //easyjson:json
@@ -134,7 +136,7 @@ func (c *Client) IssuesByFilter(f *IssueFilter) ([]*Issue, error) {
 }
 
 func (c *Client) Issues() ([]*Issue, error) {
-	issues, err := getIssues(c, "/issues.json?key="+c.apikey+c.getPaginationClause())
+	issues, err := getIssues(c, "/issues.json?include=journals&key="+c.apikey+c.getPaginationClause())
 
 	if err != nil {
 		return nil, err
@@ -290,7 +292,7 @@ func mapConcat(m map[string]string, delimiter string) string {
 }
 
 func getOneIssue(c *Client, id int, args map[string]string) (*Issue, error) {
-	url := c.endpoint + "/issues/" + strconv.Itoa(id) + ".json?key=" + c.apikey
+	url := c.endpoint + "/issues/" + strconv.Itoa(id) + ".json?key=" + c.apikey + "&include=journals"
 	if args != nil {
 		url += "&" + mapConcat(args, "&")
 	}
@@ -319,7 +321,6 @@ func getOneIssue(c *Client, id int, args map[string]string) (*Issue, error) {
 }
 
 func getIssue(c *Client, url string, offset int) (*issuesResult, error) {
-
 	statusCode, body, err := c.fhttp.Get(nil, c.endpoint+url+"&offset="+strconv.Itoa(offset))
 	if err != nil {
 		return nil, err

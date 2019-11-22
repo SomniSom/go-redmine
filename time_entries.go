@@ -28,15 +28,15 @@ type timeEntryRequest struct {
 //easyjson:json
 type TimeEntry struct {
 	Id           int            `json:"id"`
-	Project      IdName         `json:"project"`
+	Project      IdName         `json:"project,omitempty"`
 	Issue        Id             `json:"issue"`
-	User         IdName         `json:"user"`
-	Activity     IdName         `json:"activity"`
+	User         IdName         `json:"user,omitempty"`
+	Activity     IdName         `json:"activity,omitempty"`
 	Hours        float32        `json:"hours"`
-	Comments     string         `json:"comments"`
-	SpentOn      string         `json:"spent_on"`
-	CreatedOn    string         `json:"created_on"`
-	UpdatedOn    string         `json:"updated_on"`
+	Comments     string         `json:"comments,omitempty"`
+	SpentOn      string         `json:"spent_on,omitempty"`
+	CreatedOn    string         `json:"created_on,omitempty"`
+	UpdatedOn    string         `json:"updated_on,omitempty"`
 	CustomFields []*CustomField `json:"custom_fields,omitempty"`
 }
 
@@ -62,6 +62,7 @@ func (c *Client) TimeEntriesWithFilter(filter Filter) ([]TimeEntry, error) {
 	if res.StatusCode() == 404 {
 		return nil, errors.New("Not Found ")
 	}
+
 	if res.StatusCode() != 200 {
 		var er errorsResult
 		err = json.Unmarshal(res.Body(), &er)
@@ -88,9 +89,7 @@ func (c *Client) TimeEntries(projectId int) ([]TimeEntry, error) {
 	if err != nil {
 		return nil, err
 	}
-	//defer printError(res.Body.Close())
 
-	//decoder := json.NewDecoder(res.Body)
 	var r timeEntriesResult
 	if res.StatusCode() == 404 {
 		return nil, errors.New("Not Found ")
@@ -111,25 +110,23 @@ func (c *Client) TimeEntries(projectId int) ([]TimeEntry, error) {
 }
 
 func (c *Client) TimeEntry(id int) (*TimeEntry, error) {
-	res, err := c.Get(c.endpoint + "/time_entries/" + strconv.Itoa(id) + ".json?key=" + c.apikey)
+	statusCode, body, err := c.fhttp.Get(nil, c.endpoint+"/time_entries/"+strconv.Itoa(id)+".json?key="+c.apikey)
 	if err != nil {
 		return nil, err
 	}
-	defer printError(res.Body.Close())
 
-	decoder := json.NewDecoder(res.Body)
 	var r timeEntryResult
-	if res.StatusCode == 404 {
-		return nil, errors.New("Not Found ")
-	}
-	if res.StatusCode != 200 {
+	if statusCode != 200 {
+		if statusCode == 404 {
+			return nil, errors.New("Not Found ")
+		}
 		var er errorsResult
-		err = decoder.Decode(&er)
+		err = json.Unmarshal(body, &er)
 		if err == nil {
 			err = errors.New(strings.Join(er.Errors, "\n"))
 		}
 	} else {
-		err = decoder.Decode(&r)
+		err = json.Unmarshal(body, &r)
 	}
 	if err != nil {
 		return nil, err
